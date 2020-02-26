@@ -1,0 +1,1 @@
+sudo ./compile.sh  BOARD=aml-s9xxx BRANCH=current RELEASE=buster BUILD_MINIMAL=no BUILD_DESKTOP=no KERNEL_ONLY=no KERNEL_CONFIGURE=no
