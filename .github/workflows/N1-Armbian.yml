@@ -1,0 +1,48 @@
+name: N1 Armbian CI
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'armbian/**'
+
+    
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+
+    - name: Checkout - clone repository
+      uses: actions/checkout@v1
+
+    - name: Download - Armbian source download
+      run: |
+        git clone https://github.com/150balbes/Build-Armbian
+
+    - name: Script - copy build script
+      run: |
+        cp armbian/build.sh Build-Armbian/build.sh
+
+    - name: Link - link /mnt
+      run: |
+        sudo mkdir -p -m 777 /mnt/Build-Armbian/cache/sources /mnt/Build-Armbian/output
+        mkdir -p Build-Armbian/cache/sources && ln -s /mnt/Build-Armbian/cache/sources Build-Armbian/cache/sources
+        mkdir -p Build-Armbian/output && ln -s /mnt/Build-Armbian/output Build-Armbian/output
+
+    - name: Build - Build Armbian 
+      run: |
+        sudo bash build.sh
+
+    - name: Xz - Install Xz-utils
+      run: |
+        sudo apt-get install xz-utils
+
+    - name: Compress - Compress images
+      run: |
+        xz -T $(nproc) -z Build-Armbian/output/images/*.img
+
+    - name: Upload - push to artifact file
+      uses: actions/upload-artifact@v1
+      with:
+        name: n1-armbian
+        path: Build-Armbian/output/images/
