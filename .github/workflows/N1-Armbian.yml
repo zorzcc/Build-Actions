@@ -40,7 +40,7 @@ jobs:
 
     - name: Compress - Compress images
       run: |
-        xz -T $(nproc) -z Build-Armbian/output/images/*.img
+        sudo xz -T $(nproc) -z Build-Armbian/output/images/*.img
 
     - name: Upload - push to artifact file
       uses: actions/upload-artifact@v1
