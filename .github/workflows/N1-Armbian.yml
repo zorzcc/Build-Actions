@@ -13,7 +13,7 @@ jobs:
     steps:
 
     - name: Checkout - clone repository
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
       
     - name: Xz - Install Xz-utils
       run: |
@@ -37,13 +37,14 @@ jobs:
       run: |
         cd Build-Armbian
         sudo bash build.sh
-    - name: Clean - clean cache
+        
+    - name: Clean - Clean cache
       run: |
         sudo rm -rf Build-Armbian/cache/sources
 
     - name: Compress - Compress images
       run: |
-        sudo xz -T $(nproc) -z Build-Armbian/output/images/*.img
+        sudo xz -T $(nproc) -z -9 ./Build-Armbian/output/images/*.img
 
     - name: Upload - push to artifact file
       uses: actions/upload-artifact@v1
