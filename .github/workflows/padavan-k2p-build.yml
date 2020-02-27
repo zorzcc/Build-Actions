@@ -43,6 +43,7 @@ jobs:
     - name: Clean - Clean files
       run: |
         cd /opt/rt-n56u/trunk/images
+        shopt -s extglob
         sudo rm -rf !(*.trx)
 
     - name: Upload - push to artifact file
