@@ -37,6 +37,9 @@ jobs:
       run: |
         cd Build-Armbian
         sudo bash build.sh
+    - name: Clean - clean cache
+      run: |
+        sudo rm -rf Build-Armbian/cache/sources
 
     - name: Compress - Compress images
       run: |
