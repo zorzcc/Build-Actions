@@ -1,0 +1,51 @@
+name: Padavan K2P CI
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'padavan/**'
+
+    
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+
+    - name: Checkout - clone repository
+      uses: actions/checkout@v2
+
+    - name: Download - Padavan source download
+      run: |
+        git clone --depth=1 https://gitee.com/hanwckf/rt-n56u.git /opt/rt-n56u
+
+    - name: Script - copy build script
+      run: |
+        cp padavan/build.sh /opt/rt-n56u/trunk/build.sh
+
+    - name: Dependencies - Build dependencies
+      run: |
+        sudo apt install unzip libtool-bin curl cmake gperf gawk flex bison nano xxd cpio git python-docutils gettext automake autopoint texinfo build-essential help2man pkg-config zlib1g-dev libgmp3-dev libmpc-dev libmpfr-dev libncurses5-dev libltdl-dev -y
+
+    - name: Toolchain - Download toolchain
+      run: |
+        cd /opt/rt-n56u/toolchain-mipsel
+        wget https://github.com/hanwckf/padavan-toolchain/releases/download/v1.0/mipsel-linux-uclibc.tar.xz
+        tar -xvf mipsel-linux-uclibc.tar.xz -C toolchain-3.4.x
+
+    - name: Build - Build Padavan 
+      run: |
+        cd /opt/rt-n56u/trunk
+        sudo ./clear_tree
+        sudo bash build.sh
+
+    - name: Clean - Clean files
+      run: |
+        cd /opt/rt-n56u/trunk/images
+        sudo rm -rf !(*.trx)
+
+    - name: Upload - push to artifact file
+      uses: actions/upload-artifact@v1
+      with:
+        name: k2p-padavan
+        path: /opt/rt-n56u/trunk/images/
